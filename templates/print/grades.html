@@ -1,0 +1,297 @@
+{% extends "base.html" %}
+{% block title %}طباعة: كشف المعدلات{% endblock %}
+{% block content %}
+
+<style>
+@media print {
+  /* إخفاء جميع عناصر المنصة عند الطباعة */
+  .no-print, 
+  .navbar, 
+  .header, 
+  .sidebar,
+  .platform-info,
+  .subscription-info,
+  .breadcrumb,
+  .btn,
+  button,
+  .alert,
+  .notification,
+  .menu,
+  .top-bar,
+  .user-info,
+  .platform-header,
+  .subscription-status,
+  .navbar-brand,
+  .nav-link,
+  .dropdown,
+  [class*="platform"],
+  [class*="subscription"],
+  [class*="navbar"],
+  [class*="header"]:not(.official-header),
+  [class*="menu"],
+  [class*="sidebar"],
+  [id*="platform"],
+  [id*="subscription"],
+  [id*="navbar"],
+  [id*="header"]:not(.official-header),
+  [id*="menu"],
+  [id*="sidebar"] {
+    display: none !important;
+    visibility: hidden !important;
+  }
+  
+  /* إعدادات الطباعة */
+  body { 
+    font-family: 'Arial', sans-serif; 
+    font-size: 14px;
+    line-height: 1.4;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  @page {
+    margin: 1.5cm;
+    size: A4;
+  }
+  
+  /* إظهار المحتوى الرسمي فقط */
+  .print-content {
+    display: block !important;
+    visibility: visible !important;
+  }
+}
+
+/* تنسيقات المحتوى الرسمي */
+.print-content {
+  width: 100%;
+  max-width: 100%;
+}
+
+.official-header {
+  text-align: center;
+  border-bottom: 3px solid #000;
+  padding-bottom: 15px;
+  margin-bottom: 25px;
+}
+
+.republic-info h4 {
+  margin: 8px 0;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.republic-info h5 {
+  margin: 5px 0;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.institution-info {
+  margin-top: 15px;
+}
+
+.institution-info h5 {
+  font-size: 16px;
+  font-weight: bold;
+  margin: 8px 0;
+}
+
+.institution-info p {
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+.academic-info {
+  background-color: #f8f9fa;
+  padding: 15px;
+  border: 2px solid #333;
+  margin-bottom: 25px;
+  border-radius: 5px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0;
+  font-weight: bold;
+  flex-wrap: wrap;
+}
+
+.info-row span {
+  flex: 1;
+  min-width: 200px;
+  padding: 5px;
+}
+
+.document-title {
+  text-align: center;
+  margin: 20px 0;
+  font-size: 20px;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.grades-table-container {
+  margin: 25px 0;
+}
+
+.official-grades-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 2px solid #000;
+  font-size: 13px;
+  margin: 20px 0;
+}
+
+.official-grades-table th, 
+.official-grades-table td {
+  border: 1px solid #000;
+  padding: 8px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.official-grades-table th {
+  background-color: #e9ecef;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.student-name {
+  text-align: right !important;
+  font-weight: bold;
+  padding-right: 10px !important;
+}
+
+.average-score {
+  background-color: #fff3cd;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.signatures-section {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 50px;
+  page-break-inside: avoid;
+}
+
+.signature-box {
+  text-align: center;
+  width: 200px;
+  border: 1px solid #ccc;
+  padding: 15px;
+  border-radius: 5px;
+}
+
+.signature-box p {
+  margin: 5px 0;
+  font-weight: bold;
+}
+
+.signature-line {
+  border-bottom: 1px solid #000;
+  margin: 25px 0;
+  height: 50px;
+}
+</style>
+
+<div class="print-content">
+  <!-- الهوية الرسمية -->
+  <div class="official-header">
+    <div class="republic-info">
+      <h4>الجمهورية الجزائرية الديمقراطية الشعبية</h4>
+      <h5>وزارة التربية الوطنية</h5>
+    </div>
+    <div class="institution-info">
+      <h5>{{ current_user.institution or 'المؤسسة: ________________' }}</h5>
+      <p>مديرية التربية لولاية: ________________</p>
+    </div>
+  </div>
+
+  <!-- عنوان الوثيقة -->
+  <div class="document-title">
+    <h3>كشف المعدلات الفصلية</h3>
+  </div>
+
+  <!-- البيانات الأكاديمية -->
+  <div class="academic-info">
+    <div class="info-row">
+      <span>الأستاذ/ة: {{ current_user.name }}</span>
+      <span>المادة: {{ current_user.subject or '________________' }}</span>
+      <span>السنة الدراسية: {{ current_user.school_year or '2024-2025' }}</span>
+    </div>
+    <div class="info-row">
+      <span>القسم: {{ classroom.name }}</span>
+      <span>الفصل: {{ term_label(term) }}</span>
+      <span>تاريخ الطباعة: {{ moment().strftime('%d/%m/%Y') if moment else '___/___/_____' }}</span>
+    </div>
+  </div>
+
+  <!-- جدول المعدلات -->
+  <div class="grades-table-container">
+    <div class="table-responsive">
+      <table class="official-grades-table">
+        <thead>
+          <tr>
+            <th style="width: 8%;">الترتيب</th>
+            <th style="width: 35%;">اللقب والاسم</th>
+            <!--th style="width: 12%;">الفرض1 /20</th-->
+            <!--th style="width: 12%;">الفرض2 /20</th-->
+            <!--th style="width: 12%;">الإختبار /20</th-->
+            <th style="width: 12%;">المعدل /20</th>
+            <th style="width: 10%;">الرتبة</th>
+            <th style="width: 35%;">الملاحظات</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s, avg in averages %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td class="student-name">{{ s|full_name }}</td>
+            <td class="average-score">
+              {% if avg is not none %}{{ "%.2f"|format(avg) }}{% else %}-{% endif %}
+            </td>
+            <td>{{ loop.index }}</td>
+            <td style="border-bottom: 1px dotted #ccc;"></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- قسم التواقيع -->
+  <div class="signatures-section">
+    <div class="signature-box">
+      <p><strong>توقيع الأستاذ/ة</strong></p>
+      <div class="signature-line"></div>
+      <p>التاريخ: ___/___/_____</p>
+    </div>
+    
+    <div class="signature-box">
+      <p><strong>توقيع مدير المؤسسة</strong></p>
+      <div class="signature-line"></div>
+      <p><strong>الختم الرسمي</strong></p>
+    </div>
+  </div>
+</div>
+
+<!-- أزرار التحكم (تختفي عند الطباعة) -->
+<div class="no-print mt-3">
+  <button class="btn btn-dark" onclick="triggerPrint()">طباعة</button>
+  <button class="btn btn-secondary ml-2" onclick="window.history.back()">عودة</button>
+</div>
+
+<script>
+function triggerPrint() {
+  window.print();
+}
+</script>
+
+{% endblock %}

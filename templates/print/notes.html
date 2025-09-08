@@ -1,0 +1,394 @@
+{% extends "base.html" %}
+{% block title %}طباعة: دفتر الملاحظات{% endblock %}
+{% block content %}
+
+<style>
+@media print {
+  /* إخفاء جميع عناصر المنصة عند الطباعة */
+  .no-print, 
+  .navbar, 
+  .header, 
+  .sidebar,
+  .platform-info,
+  .subscription-info,
+  .breadcrumb,
+  .btn,
+  button,
+  .alert,
+  .notification,
+  .menu,
+  .top-bar,
+  .user-info,
+  .platform-header,
+  .subscription-status,
+  .navbar-brand,
+  .nav-link,
+  .dropdown,
+  [class*="platform"],
+  [class*="subscription"],
+  [class*="navbar"],
+  [class*="header"]:not(.official-header),
+  [class*="menu"],
+  [class*="sidebar"],
+  [id*="platform"],
+  [id*="subscription"],
+  [id*="navbar"],
+  [id*="header"]:not(.official-header),
+  [id*="menu"],
+  [id*="sidebar"] {
+    display: none !important;
+    visibility: hidden !important;
+  }
+  
+  /* إعدادات الطباعة */
+  body { 
+    font-family: 'Arial', sans-serif; 
+    font-size: 13px;
+    line-height: 1.4;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  @page {
+    margin: 1.5cm;
+    size: A4;
+  }
+  
+  /* إظهار المحتوى الرسمي فقط */
+  .print-content {
+    display: block !important;
+    visibility: visible !important;
+  }
+}
+
+/* تنسيقات المحتوى الرسمي مع الأزرق السماوي */
+.print-content {
+  width: 100%;
+  max-width: 100%;
+}
+
+.official-header {
+  text-align: center;
+  border-bottom: 4px solid #87CEEB;
+  background: linear-gradient(135deg, #E0F6FF 0%, #B0E0E6 100%);
+  padding: 20px 15px;
+  margin-bottom: 25px;
+  border-radius: 8px 8px 0 0;
+}
+
+.republic-info h4 {
+  margin: 8px 0;
+  font-weight: bold;
+  font-size: 18px;
+  color: #1E4D72;
+}
+
+.republic-info h5 {
+  margin: 5px 0;
+  font-weight: bold;
+  font-size: 16px;
+  color: #2E5984;
+}
+
+.institution-info {
+  margin-top: 15px;
+  padding: 10px;
+  background-color: rgba(135, 206, 235, 0.1);
+  border-radius: 5px;
+}
+
+.institution-info h5 {
+  font-size: 16px;
+  font-weight: bold;
+  margin: 8px 0;
+  color: #1E4D72;
+}
+
+.institution-info p {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #2E5984;
+}
+
+.academic-info {
+  background: linear-gradient(135deg, #E0F6FF 0%, #F0F8FF 100%);
+  padding: 15px;
+  border: 2px solid #87CEEB;
+  margin-bottom: 25px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(135, 206, 235, 0.3);
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0;
+  font-weight: bold;
+  flex-wrap: wrap;
+}
+
+.info-row span {
+  flex: 1;
+  min-width: 200px;
+  padding: 8px;
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 4px;
+  margin: 2px;
+  border-left: 3px solid #87CEEB;
+}
+
+.document-title {
+  text-align: center;
+  margin: 20px 0;
+  font-size: 22px;
+  font-weight: bold;
+  color: #1E4D72;
+  text-decoration: underline;
+  text-decoration-color: #87CEEB;
+  text-underline-offset: 8px;
+  text-decoration-thickness: 3px;
+}
+
+.notes-table-container {
+  margin: 25px 0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(135, 206, 235, 0.2);
+}
+
+.official-notes-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  margin: 0;
+}
+
+.official-notes-table th {
+  background: linear-gradient(135deg, #87CEEB 0%, #4682B4 100%);
+  color: white;
+  font-weight: bold;
+  font-size: 13px;
+  padding: 12px 6px;
+  text-align: center;
+  border: 1px solid #4682B4;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+.official-notes-table td {
+  border: 1px solid #87CEEB;
+  padding: 8px 6px;
+  text-align: center;
+  vertical-align: middle;
+  background-color: rgba(240, 248, 255, 0.5);
+}
+
+.official-notes-table tr:nth-child(even) td {
+  background-color: rgba(224, 246, 255, 0.7);
+}
+
+.official-notes-table tr:hover td {
+  background-color: rgba(135, 206, 235, 0.2);
+}
+
+.student-name {
+  text-align: right !important;
+  font-weight: bold;
+  padding-right: 10px !important;
+  color: #1E4D72;
+}
+
+.date-column {
+  font-weight: bold;
+  color: #2E5984;
+  background-color: rgba(176, 224, 230, 0.3) !important;
+}
+
+.check-mark {
+  color: #20B2AA;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.participation-good {
+  background-color: rgba(144, 238, 144, 0.3) !important;
+  color: #006400;
+  font-weight: bold;
+}
+
+.behavior-excellent {
+  background-color: rgba(173, 216, 230, 0.5) !important;
+  color: #000080;
+  font-weight: bold;
+}
+
+.signatures-section {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 50px;
+  page-break-inside: avoid;
+}
+
+.signature-box {
+  text-align: center;
+  width: 220px;
+  border: 2px solid #87CEEB;
+  padding: 20px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #F0F8FF 0%, #E0F6FF 100%);
+  box-shadow: 0 3px 6px rgba(135, 206, 235, 0.2);
+}
+
+.signature-box p {
+  margin: 8px 0;
+  font-weight: bold;
+  color: #1E4D72;
+}
+
+.signature-line {
+  border-bottom: 2px solid #87CEEB;
+  margin: 25px 0;
+  height: 50px;
+}
+
+.notes-summary {
+  margin: 25px 0;
+  padding: 15px;
+  background: linear-gradient(135deg, #E0F6FF 0%, #F0F8FF 100%);
+  border: 2px solid #87CEEB;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 16px;
+  color: #1E4D72;
+  box-shadow: 0 2px 4px rgba(135, 206, 235, 0.3);
+}
+</style>
+
+<div class="print-content">
+  <!-- الهوية الرسمية -->
+  <div class="official-header">
+    <div class="republic-info">
+      <h4>الجمهورية الجزائرية الديمقراطية الشعبية</h4>
+      <h5>وزارة التربية الوطنية</h5>
+    </div>
+    <div class="institution-info">
+      <h5>{{ current_user.institution or 'المؤسسة: ________________' }}</h5>
+      <p>مديرية التربية لولاية: ________________</p>
+    </div>
+  </div>
+
+  <!-- عنوان الوثيقة -->
+  <div class="document-title">
+    <h3>دفتر الملاحظات اليومية</h3>
+  </div>
+
+  <!-- البيانات الأكاديمية -->
+  <div class="academic-info">
+    <div class="info-row">
+      <span>الأستاذ/ة: {{ current_user.name }}</span>
+      <span>المادة: {{ current_user.subject or '________________' }}</span>
+      <span>السنة الدراسية: {{ current_user.school_year or '2024-2025' }}</span>
+    </div>
+    <div class="info-row">
+      <span>القسم: {{ classroom.name }}</span>
+      <span>عدد التلاميذ: ______</span>
+      <span>تاريخ الطباعة: {{ moment().strftime('%d/%m/%Y') if moment else '___/___/_____' }}</span>
+    </div>
+  </div>
+
+  <!-- ملخص سريع -->
+  <div class="notes-summary">
+    إجمالي الملاحظات المسجلة: {{ items|length }} ملاحظة
+  </div>
+
+  <!-- جدول الملاحظات -->
+  <div class="notes-table-container">
+    <div class="table-responsive">
+      <table class="official-notes-table">
+        <thead>
+          <tr>
+            <th style="width: 12%;">التاريخ</th>
+            <th style="width: 25%;">التلميذ</th>
+            <th style="width: 8%;">غياب</th>
+            <th style="width: 8%;">تأخر</th>
+            <th style="width: 15%;">المشاركة</th>
+            <th style="width: 15%;">السلوك</th>
+            <th style="width: 17%;">الاقتراحات</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for n in items %}
+          <tr>
+            <td class="date-column">{{ n.date|fmt_date }}</td>
+            <td class="student-name">{{ n.student|full_name }}</td>
+            <td>{% if n.absence %}<span class="check-mark">✓</span>{% else %}-{% endif %}</td>
+            <td>{% if n.tardy %}<span class="check-mark">✓</span>{% else %}-{% endif %}</td>
+            <td class="{% if n.participation in ['ممتاز', 'جيد جداً'] %}participation-good{% endif %}">
+              {{ n.participation or '-' }}
+            </td>
+            <td class="{% if n.behavior in ['ممتاز', 'جيد جداً'] %}behavior-excellent{% endif %}">
+              {{ n.behavior or '-' }}
+            </td>
+            <td style="text-align: right; padding-right: 8px;">{{ n.suggestions or '-' }}</td>
+          </tr>
+          {% endfor %}
+          
+          <!-- صفوف فارغة للكتابة اليدوية -->
+          {% for i in range(10) %}
+          <tr>
+            <td style="height: 35px; border-bottom: 1px dotted #87CEEB;"></td>
+            <td style="border-bottom: 1px dotted #87CEEB;"></td>
+            <td style="border-bottom: 1px dotted #87CEEB;"></td>
+            <td style="border-bottom: 1px dotted #87CEEB;"></td>
+            <td style="border-bottom: 1px dotted #87CEEB;"></td>
+            <td style="border-bottom: 1px dotted #87CEEB;"></td>
+            <td style="border-bottom: 1px dotted #87CEEB;"></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ملاحظات عامة -->
+  <div class="academic-info" style="margin-top: 30px;">
+    <div style="text-align: center; font-weight: bold; color: #1E4D72; margin-bottom: 15px;">
+      ملاحظات عامة على القسم
+    </div>
+    <div style="height: 80px; border: 1px dotted #87CEEB; background-color: rgba(240, 248, 255, 0.5);"></div>
+  </div>
+
+  <!-- قسم التواقيع -->
+  <div class="signatures-section">
+    <div class="signature-box">
+      <p><strong>توقيع الأستاذ/ة</strong></p>
+      <div class="signature-line"></div>
+      <p>التاريخ: ___/___/_____</p>
+    </div>
+    
+    <div class="signature-box">
+      <p><strong>توقيع مدير المؤسسة</strong></p>
+      <div class="signature-line"></div>
+      <p><strong>الختم الرسمي</strong></p>
+    </div>
+  </div>
+</div>
+
+<!-- أزرار التحكم (تختفي عند الطباعة) -->
+<div class="no-print mt-3">
+  <button class="btn btn-dark" onclick="triggerPrint()">طباعة</button>
+  <button class="btn btn-secondary ml-2" onclick="window.history.back()">عودة</button>
+</div>
+
+<script>
+function triggerPrint() {
+  window.print();
+}
+</script>
+
+{% endblock %}
