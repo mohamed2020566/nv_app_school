@@ -1,0 +1,24 @@
+
+{% extends "base.html" %}
+{% block title %}دخول{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <h3 class="mb-3">تسجيل الدخول</h3>
+    <form method="post">
+      <div class="mb-3">
+        <label class="form-label">البريد الإلكتروني</label>
+        <input name="email" type="email" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">كلمة المرور</label>
+        <input name="password" type="password" class="form-control" required>
+      </div>
+      <div class="d-flex justify-content-between align-items-center">
+        <button class="btn btn-primary">دخول</button>
+        <a href="{{ url_for('forgot_password') }}">نسيت كلمة المرور؟</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
