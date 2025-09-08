@@ -1,0 +1,65 @@
+
+{% extends "base.html" %}
+{% block title %}دفتر الملاحظات{% endblock %}
+{% block content %}
+<h3 class="mb-3">دفتر الملاحظات</h3>
+
+<form class="row g-2 mb-3" method="get">
+  <div class="col-md-4">
+    <label class="form-label">القسم</label>
+    <select name="class_id" class="form-select" onchange="this.form.submit()">
+      <option value="">اختر قسمًا</option>
+      {% for c in classes %}
+      <option value="{{ c.id }}" {% if selected_class_id==c.id %}selected{% endif %}>{{ c.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+</form>
+
+{% if selected_class_id %}
+  <form class="card mb-4" method="post" action="{{ url_for('add_note') }}">
+    <div class="card-body row g-2">
+      <input type="hidden" name="student_id" id="student_id" value="{{ students[0].id if students else '' }}">
+      <div class="col-md-3">
+        <label class="form-label">التلميذ</label>
+        <select class="form-select" name="student_id">
+          {% for s in students %}
+          <option value="{{ s.id }}">{{ s|full_name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">التاريخ</label>
+        <input class="form-control" type="date" name="date" value="{{ today|fmt_date }}">
+      </div>
+      <div class="col-md-2 form-check mt-4">
+        <input class="form-check-input" type="checkbox" name="absence" id="absence">
+        <label class="form-check-label" for="absence">غياب</label>
+      </div>
+      <div class="col-md-2 form-check mt-4">
+        <input class="form-check-input" type="checkbox" name="tardy" id="tardy">
+        <label class="form-check-label" for="tardy">تأخر</label>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">مستوى المشاركة (0-5)</label>
+        <input class="form-control" type="number" min="0" max="5" name="participation" value="3">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">ملاحظات سلوكية</label>
+        <input class="form-control" name="behavior" placeholder="مثال: انضباط ممتاز">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">اقتراحات</label>
+        <input class="form-control" name="suggestions" placeholder="مثال: دعم إضافي في الرياضيات">
+      </div>
+      <div class="col-12">
+        <button class="btn btn-primary">حفظ الملاحظة</button>
+        <a class="btn btn-outline-dark" href="{{ url_for('list_notes', class_id=selected_class_id) }}">عرض كل الملاحظات</a>
+        <a class="btn btn-outline-dark" href="{{ url_for('print_notes', class_id=selected_class_id) }}" target="_blank">طباعة</a>
+      </div>
+    </div>
+  </form>
+{% else %}
+  <div class="alert alert-info">اختر قسمًا لإدخال الملاحظات.</div>
+{% endif %}
+{% endblock %}

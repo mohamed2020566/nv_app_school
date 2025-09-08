@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}الاشتراك{% endblock %}
+{% block content %}
+<h3 class="mb-3">الاشتراك</h3>
+
+{% if request.args.get('success') %}
+  <div class="alert alert-success">تمت عملية الدفع بنجاح، وسيُحدَّث اشتراكك تلقائيًا خلال لحظات.</div>
+{% elif request.args.get('canceled') %}
+  <div class="alert alert-warning">أُلغيت العملية قبل إتمام الدفع.</div>
+{% endif %}
+
+<div class="row g-3">
+  <!-- الدفع عبر Chargily Pay -->
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-body">
+        <h5>الدفع عبر Chargily Pay</h5>
+        <p>السعر الشهري: <strong>{{ price }} دج</strong></p>
+        <form method="post" action="{{ url_for('subscribe_chargily') }}">
+          <div class="mb-3">
+            <label class="form-label">عدد الأشهر</label>
+            <input type="number" min="1" name="months" class="form-control" value="1">
+          </div>
+          <button class="btn btn-primary">ادفع الآن عبر Chargily Pay</button>
+        </form>
+        <p class="text-muted mt-2 small">سيتم تحويلك لبوابة الدفع، وبعد التأكيد سيُمدَّد اشتراكك تلقائيًا.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- تجديد يدوي (اختبار فقط) -->
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-body">
+        <h5>تجديد الاشتراك (يدوي/تجريبي)</h5>
+        <p>السعر الشهري: <strong>{{ price }} دج</strong></p>
+        <form method="post">
+          <div class="mb-3">
+            <label class="form-label">عدد الأشهر</label>
+            <input type="number" min="1" name="months" class="form-control" value="1">
+          </div>
+          <button class="btn btn-success">تجديد يدوي</button>
+        </form>
+        <p class="text-muted mt-2 small">مخصص للاختبار فقط في البيئة المحلية.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- السجل -->
+<div class="card mt-3">
+  <div class="card-body">
+    <h5>سجل الدفعات</h5>
+    <div class="table-responsive">
+      <table class="table table-sm">
+        <thead><tr><th>التاريخ</th><th>الفترة</th><th>المبلغ</th><th>الطريقة</th></tr></thead>
+        <tbody>
+          {% for p in payments %}
+          <tr>
+            <td>{{ p.created_at|fmt_date }}</td>
+            <td>{{ p.period_start|fmt_date }} → {{ p.period_end|fmt_date }}</td>
+            <td>{{ p.amount_dzd }} دج</td>
+            <td>{{ p.method }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="4" class="text-muted">لا توجد دفعات.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,60 @@
+
+{% extends "base.html" %}
+{% block title %}الرئيسية{% endblock %}
+{% block content %}
+<h3 class="mb-4">لوحة القيادة</h3>
+<div class="row g-3 mb-4">
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <div class="text-muted">عدد الأقسام</div>
+            <div class="display-6">{{ classes|length }}</div>
+          </div>
+          <div class="text-end">
+            <a href="{{ url_for('classes') }}" class="btn btn-sm btn-outline-primary">إدارة</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <div class="text-muted">عدد التلاميذ</div>
+            <div class="display-6">{{ students_count }}</div>
+          </div>
+          <div class="text-end">
+            <a href="{{ url_for('students') }}" class="btn btn-sm btn-outline-primary">إدارة</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-body">
+        <div class="text-muted">اشتراك</div>
+        <div>سعر الشهري: {{ MONTHLY_PRICE_DZD }} دج</div>
+        <a href="{{ url_for('subscribe') }}" class="btn btn-sm btn-success mt-2">تجديد/اشتراك</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title">اختصارات سريعة</h5>
+    <div class="d-flex flex-wrap gap-2">
+      <a class="btn btn-outline-primary btn-sm" href="{{ url_for('classes') }}">إضافة قسم</a>
+      <a class="btn btn-outline-primary btn-sm" href="{{ url_for('students') }}">إضافة تلميذ</a>
+      <a class="btn btn-outline-primary btn-sm" href="{{ url_for('notes_home') }}">تسجيل ملاحظة</a>
+      <a class="btn btn-outline-primary btn-sm" href="{{ url_for('grades_home') }}">إدخال علامة</a>
+      <a class="btn btn-outline-primary btn-sm" href="{{ url_for('planning') }}">تحضير درس</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

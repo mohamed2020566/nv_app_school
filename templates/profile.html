@@ -1,0 +1,27 @@
+
+{% extends "base.html" %}
+{% block title %}ملفي{% endblock %}
+{% block content %}
+<h3 class="mb-3">معلومات الأستاذ</h3>
+<form method="post" class="row g-3">
+  <div class="col-md-6">
+    <label class="form-label">الاسم الكامل</label>
+    <input class="form-control" name="name" value="{{ current_user.name or '' }}" required>
+  </div>
+  <div class="col-md-6">
+    <label class="form-label">المؤسسة</label>
+    <input class="form-control" name="institution" value="{{ current_user.institution or '' }}">
+  </div>
+  <div class="col-md-6">
+    <label class="form-label">المادة</label>
+    <input class="form-control" name="subject" value="{{ current_user.subject or '' }}">
+  </div>
+  <div class="col-md-6">
+    <label class="form-label">السنة الدراسية</label>
+    <input class="form-control" name="school_year" placeholder="مثال: 2025/2024" value="{{ current_user.school_year or '' }}">
+  </div>
+  <div class="col-12">
+    <button class="btn btn-primary">حفظ</button>
+  </div>
+</form>
+{% endblock %}

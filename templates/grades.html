@@ -1,0 +1,106 @@
+
+{% extends "base.html" %}
+{% block title %}التنقيط{% endblock %}
+{% block content %}
+<h3 class="mb-3">التنقيط</h3>
+<form class="row g-2 mb-3" method="get">
+  <div class="col-md-3">
+    <label class="form-label">القسم</label>
+    <select name="class_id" class="form-select" onchange="this.form.submit()">
+      <option value="">اختر قسمًا</option>
+      {% for c in classes %}
+      <option value="{{ c.id }}" {% if class_id==c.id %}selected{% endif %}>{{ c.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-3">
+    <label class="form-label">الفصل/الثلاثي</label>
+    <select name="term" class="form-select" onchange="this.form.submit()">
+      <option value="">الكل</option>
+      <option value="1" {% if term==1 %}selected{% endif %}>الأول</option>
+      <option value="2" {% if term==2 %}selected{% endif %}>الثاني</option>
+      <option value="3" {% if term==3 %}selected{% endif %}>الثالث</option>
+    </select>
+  </div>
+</form>
+
+{% if class_id %}
+<form class="card mb-4" method="post" action="{{ url_for('add_grade') }}">
+  <div class="card-body row g-2">
+    <div class="col-md-3">
+      <label class="form-label">التلميذ</label>
+      <select class="form-select" name="student_id">
+        {% for s in students %}
+        <option value="{{ s.id }}">{{ s|full_name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2">
+      <label class="form-label">الفصل</label>
+      <select name="term" class="form-select">
+        <option value="1" {% if term==1 %}selected{% endif %}>1</option>
+        <option value="2" {% if term==2 %}selected{% endif %}>2</option>
+        <option value="3" {% if term==3 %}selected{% endif %}>3</option>
+      </select>
+    </div>
+    <!--div class="col-md-3">
+      <label class="form-label">الفرض الأول</label>
+      <input class="form-control" name="exam1" placeholder="أدخل المعدل">
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">الفرض الثاني</label>
+      <input class="form-control" name="exam2" placeholder="أو أكتب (/) إذا لم يكن /أدخل المعدل">
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">الإختبار</label>
+      <input class="form-control" name="final_exam" placeholder="أدخل المعدل">
+    </div-->
+    <div class="col-md-2">
+      <label class="form-label">العلامة</label>
+      <input class="form-control" type="number" step="0.01" name="score" required>
+    </div>
+    <div class="col-md-1">
+      <label class="form-label">من</label>
+      <input class="form-control" type="number" step="0.01" name="out_of" value="20">
+    </div>
+    <div class="col-md-1">
+      <label class="form-label">الوزن</label>
+      <input class="form-control" type="number" step="0.1" name="weight" value="1">
+    </div>
+    <div class="col-md-2">
+      <label class="form-label">التاريخ</label>
+      <input class="form-control" type="date" name="date" value="{{ today|fmt_date }}">
+    </div>
+    <div class="col-12">
+      <button class="btn btn-primary">حفظ العلامة</button>
+      {% if class_id %}
+      <a class="btn btn-outline-dark" target="_blank" href="{{ url_for('print_grades', class_id=class_id, term=term or 1) }}">طباعة كشف المعدلات</a>
+      {% endif %}
+    </div>
+  </div>
+</form>
+{% endif %}
+
+<div class="table-responsive">
+  <table class="table table-striped">
+    <thead><tr><th>التاريخ</th><th>التلميذ</th><th>الفصل</th><!--th>الفرض الأول</th><th>الفرض الثاني</th><th>الإختبار</th--><th>العلامة</th><th>من</th><th>وزن</th></tr></thead>
+    <tbody>
+      {% for g in items %}
+      <tr>
+        <td>{{ g.date|fmt_date }}</td>
+        <td>{{ g.student|full_name }} ({{ g.student.classroom.name }})</td>
+        <td><span class="badge bg-secondary badge-term">{{ term_label(g.term) }}</span></td>
+        <!--td>{{ g.exam1 }}</td>
+        <td>{{ g.exam2 }}</td>
+        <td>{{ g.final_exam }}</td-->
+        <td>{{ "%.2f"|format(g.score) }}</td>
+        <td>{{ "%.2f"|format(g.out_of) }}</td>
+        <td>{{ "%.2f"|format(g.weight) }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="7"><div class="alert alert-info m-0">لا توجد نقاط مسجلة.</div></td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

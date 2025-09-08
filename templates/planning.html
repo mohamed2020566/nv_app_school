@@ -1,0 +1,59 @@
+
+{% extends "base.html" %}
+{% block title %}دفتر التحضير{% endblock %}
+{% block content %}
+<h3 class="mb-3">دفتر التحضير</h3>
+<form class="card mb-4" method="post">
+  <div class="card-body row g-2">
+    <div class="col-md-3">
+      <label class="form-label">القسم</label>
+      <select name="classroom_id" class="form-select" required>
+        {% for c in classes %}
+        <option value="{{ c.id }}" {% if c.id == request.args.get('class_id', type=int) %}selected{% endif %}>{{ c.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2">
+      <label class="form-label">التاريخ</label>
+      <input type="date" name="date" class="form-control" value="{{ today|fmt_date }}">
+    </div>
+    <div class="col-md-7">
+      <label class="form-label">عنوان الدرس</label>
+      <input name="title" class="form-control" placeholder="عنوان">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">الأهداف</label>
+      <textarea name="objectives" class="form-control" rows="3"></textarea>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">الوسائل البيداغوجية</label>
+      <textarea name="pedagogy" class="form-control" rows="3"></textarea>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">سير الحصة</label>
+      <textarea name="session_plan" class="form-control" rows="3"></textarea>
+    </div>
+    <div class="col-12">
+      <button class="btn btn-primary">حفظ التحضير</button>
+    </div>
+  </div>
+</form>
+
+<div class="table-responsive">
+  <table class="table table-striped">
+    <thead><tr><th>التاريخ</th><th>القسم</th><th>العنوان</th><th class="no-print">طباعة</th></tr></thead>
+    <tbody>
+      {% for p in items %}
+      <tr>
+        <td>{{ p.date|fmt_date }}</td>
+        <td>{{ p.classroom.name }}</td>
+        <td>{{ p.title }}</td>
+        <td class="no-print"><a class="btn btn-sm btn-outline-dark" target="_blank" href="{{ url_for('print_lesson_plan', plan_id=p.id) }}">طباعة</a></td>
+      </tr>
+      {% else %}
+      <tr><td colspan="4"><div class="alert alert-info m-0">لا توجد تحضيرات.</div></td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

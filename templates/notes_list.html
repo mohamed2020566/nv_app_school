@@ -1,0 +1,46 @@
+
+{% extends "base.html" %}
+{% block title %}قائمة الملاحظات{% endblock %}
+{% block content %}
+<h3 class="mb-3">قائمة الملاحظات</h3>
+<form class="row g-2 mb-3" method="get">
+  <div class="col-md-3">
+    <select name="class_id" class="form-select">
+      <option value="">كل الأقسام</option>
+      {% for c in classes %}
+      <option value="{{ c.id }}" {% if class_id==c.id %}selected{% endif %}>{{ c.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-5">
+    <input class="form-control" name="q" value="{{ q }}" placeholder="بحث بالاسم أو اللقب">
+  </div>
+  <div class="col-md-2"><button class="btn btn-outline-secondary w-100">بحث</button></div>
+  {% if class_id %}
+  <div class="col-md-2">
+    <a class="btn btn-outline-dark w-100" target="_blank" href="{{ url_for('print_notes', class_id=class_id) }}">طباعة</a>
+  </div>
+  {% endif %}
+</form>
+
+<div class="table-responsive">
+  <table class="table table-striped">
+    <thead><tr><th>التاريخ</th><th>التلميذ</th><th>غياب</th><th>تأخر</th><th>مشاركة</th><th>السلوك</th><th>اقتراحات</th></tr></thead>
+    <tbody>
+      {% for n in items %}
+      <tr>
+        <td>{{ n.date|fmt_date }}</td>
+        <td>{{ n.student|full_name }} ({{ n.student.classroom.name }})</td>
+        <td>{% if n.absence %}✓{% endif %}</td>
+        <td>{% if n.tardy %}✓{% endif %}</td>
+        <td>{{ n.participation }}</td>
+        <td>{{ n.behavior }}</td>
+        <td>{{ n.suggestions }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="7"><div class="alert alert-info m-0">لا توجد ملاحظات.</div></td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
