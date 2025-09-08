@@ -1,0 +1,34 @@
+
+{% extends "base.html" %}
+{% block title %}دفتر الاجتماعات{% endblock %}
+{% block content %}
+<h3 class="mb-3">دفتر الاجتماعات</h3>
+<form class="card mb-4" method="post">
+  <div class="card-body row g-2">
+    <div class="col-md-2">
+      <label class="form-label">التاريخ</label>
+      <input type="date" name="date" class="form-control" value="{{ today|fmt_date }}">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">العنوان</label>
+      <input name="title" class="form-control">
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">ملاحظات</label>
+      <textarea name="notes" class="form-control" rows="2"></textarea>
+    </div>
+    <div class="col-12"><button class="btn btn-primary">حفظ</button></div>
+  </div>
+</form>
+
+<div class="table-responsive">
+  <table class="table table-striped"><thead><tr><th>التاريخ</th><th>العنوان</th><th>ملاحظات</th></tr></thead>
+  <tbody>
+    {% for m in items %}
+    <tr><td>{{ m.date|fmt_date }}</td><td>{{ m.title }}</td><td>{{ m.notes }}</td></tr>
+    {% else %}
+    <tr><td colspan="3"><div class="alert alert-info m-0">لا توجد اجتماعات مسجلة.</div></td></tr>
+    {% endfor %}
+  </tbody></table>
+</div>
+{% endblock %}

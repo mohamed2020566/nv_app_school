@@ -1,0 +1,34 @@
+
+{% extends "base.html" %}
+{% block title %}دفتر الأنشطة{% endblock %}
+{% block content %}
+<h3 class="mb-3">دفتر الأنشطة</h3>
+<form class="card mb-4" method="post">
+  <div class="card-body row g-2">
+    <div class="col-md-2">
+      <label class="form-label">التاريخ</label>
+      <input type="date" name="date" class="form-control" value="{{ today|fmt_date }}">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">النشاط</label>
+      <input name="title" class="form-control">
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">الوصف</label>
+      <textarea name="description" class="form-control" rows="2"></textarea>
+    </div>
+    <div class="col-12"><button class="btn btn-primary">حفظ</button></div>
+  </div>
+</form>
+
+<div class="table-responsive">
+  <table class="table table-striped"><thead><tr><th>التاريخ</th><th>النشاط</th><th>الوصف</th></tr></thead>
+  <tbody>
+    {% for a in items %}
+    <tr><td>{{ a.date|fmt_date }}</td><td>{{ a.title }}</td><td>{{ a.description }}</td></tr>
+    {% else %}
+    <tr><td colspan="3"><div class="alert alert-info m-0">لا توجد أنشطة مسجلة.</div></td></tr>
+    {% endfor %}
+  </tbody></table>
+</div>
+{% endblock %}

@@ -1,0 +1,68 @@
+
+{% extends "base.html" %}
+{% block title %}المتابعة الفردية{% endblock %}
+{% block content %}
+<h3 class="mb-3">دفتر المتابعة الفردية</h3>
+
+<form class="row g-2 mb-3" method="get">
+  <div class="col-md-4">
+    <label class="form-label">القسم</label>
+    <select name="class_id" class="form-select" onchange="this.form.submit()">
+      <option value="">اختر قسمًا</option>
+      {% for c in classes %}
+      <option value="{{ c.id }}" {% if class_id==c.id %}selected{% endif %}>{{ c.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+</form>
+
+{% if class_id %}
+<form class="card mb-4" method="post">
+  <div class="card-body row g-2">
+    <div class="col-md-4">
+      <label class="form-label">التلميذ</label>
+      <select name="student_id" class="form-select">
+        {% for s in students %}
+        <option value="{{ s.id }}">{{ s|full_name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2">
+      <label class="form-label">التاريخ</label>
+      <input type="date" name="date" class="form-control" value="{{ today|fmt_date }}">
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">خطة الدعم</label>
+      <input name="plan" class="form-control">
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">ملاحظات</label>
+      <input name="notes" class="form-control">
+    </div>
+    <div class="col-12"><button class="btn btn-primary">حفظ المتابعة</button></div>
+  </div>
+</form>
+{% endif %}
+
+<form class="row g-2 mb-3" method="get">
+  <input type="hidden" name="class_id" value="{{ class_id or '' }}">
+  <div class="col-md-8">
+    <input class="form-control" name="q" value="{{ request.args.get('q','') }}" placeholder="بحث بالاسم أو اللقب">
+  </div>
+  <div class="col-md-2"><button class="btn btn-outline-secondary w-100">بحث</button></div>
+  {% if class_id %}
+  <div class="col-md-2"><a class="btn btn-outline-dark w-100" target="_blank" href="{{ url_for('print_notes', class_id=class_id) }}">طباعة</a></div>
+  {% endif %}
+</form>
+
+<div class="table-responsive">
+  <table class="table table-striped"><thead><tr><th>التاريخ</th><th>التلميذ</th><th>القسم</th><th>خطة الدعم</th><th>ملاحظات</th></tr></thead>
+  <tbody>
+    {% for f in items %}
+    <tr><td>{{ f.date|fmt_date }}</td><td>{{ f.student|full_name }}</td><td>{{ f.student.classroom.name }}</td><td>{{ f.plan }}</td><td>{{ f.notes }}</td></tr>
+    {% else %}
+    <tr><td colspan="5"><div class="alert alert-info m-0">لا توجد متابعات.</div></td></tr>
+    {% endfor %}
+  </tbody></table>
+</div>
+{% endblock %}
