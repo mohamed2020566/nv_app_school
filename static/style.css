@@ -1,0 +1,15 @@
+
+html[dir="rtl"] body {
+  font-family: "Tajawal", "Cairo", "Segoe UI", Tahoma, sans-serif;
+}
+.container-narrow { max-width: 980px; }
+.navbar-brand { font-weight: 700; }
+.table thead th { white-space: nowrap; }
+.badge-term { font-size: .85rem; }
+@media print {
+  .no-print { display: none !important; }
+  .print-header { margin-bottom: 10px; }
+  .print-header h5 { margin: 0; }
+  body { background: #fff; }
+  table { font-size: 12px; }
+}

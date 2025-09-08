@@ -1,0 +1,2 @@
+
+function triggerPrint(){ window.print(); }
